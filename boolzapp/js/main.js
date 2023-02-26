@@ -203,6 +203,7 @@ createApp({
         currentMessage : -1,
         searchText : "",
         chev : false,
+        
 };
   },
   methods : {
