@@ -1,11 +1,135 @@
-<html lang="en">
+<html lang="it">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Todolist
+    </title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  
+    <div id="app">
+
+        <section class="grey-section">
+            <div class="green-absolute">
+                <!-- ************contenitore principale con flex parte sinistra avatars e destra chat aperta********* -->
+                <div class="principale m-auto mt-4 d-flex">
+                    <!--*************** contenitore delle chat sinistra*************** -->
+                    <div class="lista-chat d-flex flex-column">
+                        <!-- avatar alto a sinistra -->
+                        <div class="py-2 px-2 d-flex justify-content-between avatar-alto-sinistra">
+                            <div class="d-flex align-items-center">
+                                <img class="immagine-avatar-principale" src="img/avatar_io.jpg" alt="">
+                                <div class="fw-bold ms-2">Sofia</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 ">
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-circle-notch"></i></a>
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-message"></i></a>
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+                            </div>
+                        </div>
+                        <!-- riquadro celeste notifiche -->
+                        <div class="color-notifiche py-3 d-flex align-items-center gap-2">
+                            <div class="p-3 ms-4 bg-white d-inline-block rounded-circle">
+                                <a class="text-info fs-5" href="#"><i class="fa-solid fa-bell-slash"></i></a>
+                            </div>
+                            <div>
+                                <span class="fw-semibold"> Ricevi notifiche di nuovi messaggi</span><br>
+                                <small class="text-decoration-underline text-primary">Attiva notifiche desktop</small>
+                            </div>
+                        </div>
+                        <!-- riquadro per cercare le chat -->
+                        <label class="px-1 py-1 label-cerca d-flex align-items-center">
+                            <a class="px-4 text-secondary" href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            <input class="label-cerca" type="text" placeholder="Cerca o inizia una nuova chat" v-model="searchText">
+                        </label>
+                        <!-- contenitore delle chat -->
+                        <div class="flex-fill overflow-auto">
+                            <div class="overflow-auto">
+                                <!-- singola chat da fare con v-for -->
+                                <!--******ciclo for*******-->
+                                <label class="label-cerca py-2 ps-3 pe-1 d-flex align-item
+                                    justify-content-between" v-for="(user , index) in searchUser" @click="onChatClick(index)"
+                                    :class="(index === currentIndex) ? 'active' : '' ">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <img class="immagine-avatars" :src="user.avatar" alt="">
+                                        </div>
+                                        <div class="fw-semibold">{{user.name}}<br>
+                                            <small v-if="(index === currentIndex )" class="text-secondary">ultimo messaggio inviato alle ore {{changeOra(index)}}</small>
+                                            <small v-else class="text-secondary">ultimo messaggio inviato alle ore {{changeOra(index)}}</small>
+                                        </div>
+                                    </div>
+                                    <div v-if="(index === currentIndex )" class="fs-6">{{changeOra(index)}}</div>
+                                    <div v-else class="fs-6">{{changeOra(index)}}</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--*************** contenitore chat a destra*************** -->
+                    <div class="flex-fill d-flex flex-column ">
+                        <!-- chat attuale -->
+                        <div class="py-2 ps-3 pe-4 d-flex justify-content-between">
+                            <div v-if="(currentIndex === -1)" class="d-flex align-items-center">
+                                <h6 class="ps-2">Non ci sono chat attive, premi per visualizzare una chat</h6>
+                            </div>
+                            <div v-else class="d-flex align-items-center">
+                                <img class="immagine-avatar-principale" :src="searchUser[currentIndex].avatar" alt="utenti">
+                                <div class="fw-semibold ms-2">{{searchUser[currentIndex].name}}<br>
+                                    <small class="text-secondary">Ultimo accesso oggi alle {{new Date().toLocaleTimeString()}}</small>
+                                </div>
+                            </div>
+                            
+
+                            <div class="d-flex align-items-center gap-3 ">
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-paperclip"></i></a>
+                                <a class="fs-5 text-secondary" href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+                            </div>
+                        </div>
+                        <div v-if="(currentIndex === -1)" class="bg-white flex-fill d-flex flex-column">
+                        </div>
+                        <div v-else class="sfondo-chat flex-fill d-flex flex-column">
+                            <div v-for="(message, index) in searchUser[currentIndex].messages" key="message"
+                                :class="(message.status === 'sent') ? 'sent align-self-end' : 'received align-self-start' ">
+                                {{message.message}}
+                                <span class="data-absolute">{{message.date}}</span>
+                                <span @click="clickchev(index)"  class="arrow-absolute"><i class="fa-solid fa-chevron-down"></i></span>
+                                <div v-if="(currentMessage === index)" class="position-relative-delete" @mouseleave="closechev">Cancellare il messaggio? <br>
+                                    <button class="button-delete-message" @click="deleteMessage(index)" >Yes</button>
+                                    <button @click="closechev" class="button-delete-message">No</button>
+                                </div>
+                            </div>
+                        </div>
+                        <form v-if="(currentIndex === -1)" class="px-4 pt-2 d-flex gap-4 align-items-center">
+                            
+                            
+                        </form>
+                        <form v-else @submit.prevent="onInputMessage(currentIndex)" class="px-4 pt-2 d-flex gap-4 align-items-center">
+                            <a class="text-secondary fs-5" href="#"><i class="fa-regular fa-face-smile"></i></a>
+                            <input class="chat-input" placeholder="Scrivi un messaggio" v-model="newMessage" type="text">
+                            <a class="text-secondary fs-5" href="#"><i class="fa-solid fa-microphone"></i></a>
+                            
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+
+    </div>
+    <script src="js/main.js"></script>
 </body>
+
 </html>
