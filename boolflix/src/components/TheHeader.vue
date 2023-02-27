@@ -15,7 +15,7 @@
   
 </template>
 <script>
-import {store, fetchMovies, fetchTvSeries} from '../store'
+import {store, fetchMovies, fetchTvSeries} from '../assets/store'
 export default {
   data() {
     return {

@@ -19,7 +19,7 @@
   </section>
 </template>
 <script>
-import {store} from '../store'
+import {store} from '../assets/store'
 import Card from '../components/Card.vue'
 export default {
   components : { Card, },

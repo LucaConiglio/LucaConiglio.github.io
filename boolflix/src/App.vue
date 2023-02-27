@@ -1,6 +1,6 @@
 <script>
 import TheMain from './components/TheMain.vue';
-import {store, fetchMovies } from './store';
+import {store, fetchMovies } from './assets/store';
 import TheHeader from './components/TheHeader.vue';
 import Loader from './components/Loader.vue'
 import axios from 'axios'
@@ -12,10 +12,10 @@ export default {
     }
   },
 methods: {
-  // onSearch() {
-    //fetchMovies();
-   // fetchTvSeries();
-  //}
+   onSearch() {
+    fetchMovies();
+    fetchTvSeries();
+  }
 },
 
   computed :{
